@@ -1,24 +1,15 @@
+import os
 from pathlib import Path
-from pathlib import Path
+import dj_database_url
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sf)y-0&y(8fmxoq+g*c452n1ct2dd(x*de#%g2rkljvv@*u__z'
-
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY
+SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-secret")
 DEBUG = False
-
 ALLOWED_HOSTS = ['*']
 
-
-# Application definition
-
+# APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,8 +20,11 @@ INSTALLED_APPS = [
     'store',
 ]
 
+# MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -41,6 +35,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ecommerce_project.urls'
 
+# TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -58,61 +53,44 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerce_project.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+# DATABASE (Railway compatible)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3')
+    )
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
+# PASSWORD VALIDATION
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
+# INTERNATIONAL
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
+# STATIC FILES
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
-STATIC_URL = 'static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+# MEDIA FILES
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# DEFAULT PK
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = 'media'
-
-RAZORPAY_KEY_ID = "rzp_test_ShrE3TGzYlUjeN"
-RAZORPAY_KEY_SECRET = "4GNwgkwuxCeXhuF26al5RhfL"
+# RAZORPAY KEYS
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
