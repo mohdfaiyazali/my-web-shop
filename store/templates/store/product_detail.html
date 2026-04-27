@@ -1,0 +1,16 @@
+{% extends 'store/base.html' %}
+{% block content %}
+
+<h2>{{ product.name }}</h2>
+
+<img src="{{ product.image.url }}" width="300">
+
+<p>{{ product.description }}</p>
+<p>Price: ₹{{ product.price }}</p>
+
+<form method="POST" action="{% url 'add_to_cart' product.id %}">
+    {% csrf_token %}
+    <button class="btn btn-success">Add to Cart</button>
+</form>
+
+{% endblock %}

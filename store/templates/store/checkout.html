@@ -1,0 +1,47 @@
+{% extends 'store/base.html' %}
+{% block content %}
+
+<form action="{% url 'payment_success' %}" method="POST">
+    {% csrf_token %}
+    <script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        data-key="{{ key_id }}"
+        data-amount="{{ payment.amount }}"
+        data-currency="INR"
+        data-order_id="{{ payment.id }}"
+        data-buttontext="Pay Now"
+        data-name="My Store"
+        data-description="Test Payment"
+        data-theme.color="#3399cc"
+    ></script>
+</form>
+
+<button id="pay-btn">Pay Now</button>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+var options = {
+    "key": "{{ key_id }}",
+    "amount": "{{ payment.amount }}",
+    "currency": "INR",
+    "order_id": "{{ payment.id }}",
+        "method": {
+        "upi": true,
+        "card": true,
+        "netbanking": true
+    "handler": function (response){
+        alert("Payment Successful!");
+        window.location.href = "/success/";
+    }
+};
+
+var rzp = new Razorpay(options);
+
+document.getElementById('pay-btn').onclick = function(e){
+    rzp.open();
+    e.preventDefault();
+}
+</script>
+
+{% endblock %}
